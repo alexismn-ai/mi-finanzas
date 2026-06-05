@@ -181,11 +181,8 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
       <div class="metric"><div class="label">Gastos</div><div class="val exp" id="m-exp">$0</div></div>
       <div class="metric full"><div class="label">Saldo disponible</div><div class="val bal" id="m-bal">$0</div></div>
     </div>
-    <div class="two-col">
-      <div class="card" style="margin-bottom:0"><div class="card-title">Por categoría</div><div class="chart-wrap-sm"><canvas id="chart-donut" role="img" aria-label="Gastos por categoría">Sin datos.</canvas></div></div>
-      <div class="card" style="margin-bottom:0"><div class="card-title">Por medio de pago</div><div class="chart-wrap-sm"><canvas id="chart-medio" role="img" aria-label="Por medio de pago">Sin datos.</canvas></div></div>
-    </div>
-    <div style="height:14px"></div>
+    <div class="card"><div class="card-title">Por categoría</div><div class="chart-wrap-sm"><canvas id="chart-donut" role="img" aria-label="Gastos por categoría">Sin datos.</canvas></div></div>
+    <div class="card"><div class="card-title">Por medio de pago</div><div class="chart-wrap-sm"><canvas id="chart-medio" role="img" aria-label="Por medio de pago">Sin datos.</canvas></div></div>
     <div class="card"><div class="card-title">Tendencia 6 meses</div><div class="legend"><span class="legend-item"><span class="legend-dot" style="background:var(--accent2)"></span>Ingresos</span><span class="legend-item"><span class="legend-dot" style="background:var(--red)"></span>Gastos</span></div><div class="chart-wrap"><canvas id="chart-main" role="img" aria-label="Tendencia">Sin datos.</canvas></div></div>
     <div class="card"><div class="card-title">Gastos por categoría</div><div id="cat-bars"><div class="empty">Sin gastos este mes</div></div></div>
     <div class="card"><div class="card-title">Últimos movimientos</div><div id="recent-list"><div class="empty">Agrega tu primer movimiento</div></div></div>
