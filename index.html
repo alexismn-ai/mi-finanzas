@@ -15,10 +15,20 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 .header h1{font-size:20px;font-weight:600;letter-spacing:-.3px}
 .sync{font-size:11px;font-family:var(--mono);padding:4px 10px;border-radius:100px;background:var(--bg3);color:var(--muted);display:flex;align-items:center;gap:5px}
 .sync.ok{color:var(--accent2)}.sync.err{color:var(--red)}.sync.loading{color:var(--amber)}
-.nav{display:flex;padding:0 20px;gap:3px;margin-bottom:20px;overflow-x:auto}
-.nav::-webkit-scrollbar{display:none}
-.nav button{flex-shrink:0;padding:7px 12px;font-size:12px;font-family:var(--font);background:transparent;border:none;color:var(--muted);cursor:pointer;border-radius:8px;transition:all .15s;white-space:nowrap}
-.nav button.active{background:var(--bg3);color:var(--text);font-weight:500}
+.nav-bar{display:flex;align-items:center;padding:0 20px;margin-bottom:20px;gap:10px}
+.nav-active-label{flex:1;font-size:14px;font-weight:500;color:var(--text)}
+.nav-hamburger{width:38px;height:38px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;color:var(--text);flex-shrink:0;transition:background .15s}
+.nav-hamburger:hover{background:var(--bg2)}
+.nav-drawer-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200}
+.nav-drawer-overlay.open{display:block}
+.nav-drawer{position:fixed;top:0;right:0;bottom:0;width:240px;background:var(--bg2);border-left:1px solid var(--border);z-index:201;padding:24px 16px;display:flex;flex-direction:column;gap:4px;transform:translateX(100%);transition:transform .2s ease}
+.nav-drawer.open{transform:translateX(0)}
+.nav-drawer-title{font-size:11px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted);padding:0 8px;margin-bottom:8px}
+.nav-drawer button{width:100%;padding:11px 12px;font-size:14px;font-family:var(--font);background:transparent;border:none;color:var(--muted);cursor:pointer;border-radius:10px;text-align:left;transition:all .15s;display:flex;align-items:center;gap:10px}
+.nav-drawer button:hover{background:var(--bg3);color:var(--text)}
+.nav-drawer button.active{background:rgba(124,106,255,.15);color:var(--text);font-weight:500}
+.nav-drawer button .nav-icon{font-size:16px;width:20px;text-align:center}
+.nav-close{margin-top:auto;padding:11px 12px;font-size:14px;font-family:var(--font);background:var(--bg3);border:1px solid var(--border);border-radius:10px;color:var(--muted);cursor:pointer;text-align:center;width:100%}
 .page{display:none;padding:0 20px}.page.active{display:block}
 .month-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
 .month-nav button{background:var(--bg3);border:none;color:var(--text);padding:6px 14px;border-radius:8px;cursor:pointer;font-size:16px}
@@ -147,16 +157,23 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
     <h1>Mis finanzas</h1>
     <div class="sync loading" id="sync-status"><span class="spinner"></span> Cargando</div>
   </div>
-  <nav class="nav">
-    <button class="active" onclick="showPage('inicio',this)">Inicio</button>
-    <button onclick="showPage('movimientos',this)">Movimientos</button>
-    <button onclick="showPage('presupuesto',this)">Presupuesto</button>
-    <button onclick="showPage('metas',this)">Metas</button>
-    <button onclick="showPage('deudas',this)">Deudas</button>
-    <button onclick="showPage('recurrentes',this)">Recurrentes</button>
-    <button onclick="showPage('tarjetas',this)">Tarjetas</button>
-    <button onclick="showPage('calendario',this)">Calendario</button>
-  </nav>
+  <div class="nav-bar">
+    <span class="nav-active-label" id="nav-active-label">Inicio</span>
+    <button class="nav-hamburger" onclick="openDrawer()" aria-label="Menú">&#9776;</button>
+  </div>
+  <div class="nav-drawer-overlay" id="nav-overlay" onclick="closeDrawer()"></div>
+  <div class="nav-drawer" id="nav-drawer">
+    <div class="nav-drawer-title">Navegación</div>
+    <button class="active" id="nav-btn-inicio" onclick="showPage('inicio',this)"><span class="nav-icon">🏠</span>Inicio</button>
+    <button id="nav-btn-movimientos" onclick="showPage('movimientos',this)"><span class="nav-icon">💸</span>Movimientos</button>
+    <button id="nav-btn-presupuesto" onclick="showPage('presupuesto',this)"><span class="nav-icon">🎯</span>Presupuesto</button>
+    <button id="nav-btn-metas" onclick="showPage('metas',this)"><span class="nav-icon">⭐</span>Metas</button>
+    <button id="nav-btn-deudas" onclick="showPage('deudas',this)"><span class="nav-icon">📋</span>Deudas</button>
+    <button id="nav-btn-recurrentes" onclick="showPage('recurrentes',this)"><span class="nav-icon">🔁</span>Recurrentes</button>
+    <button id="nav-btn-tarjetas" onclick="showPage('tarjetas',this)"><span class="nav-icon">💳</span>Tarjetas</button>
+    <button id="nav-btn-calendario" onclick="showPage('calendario',this)"><span class="nav-icon">📅</span>Calendario</button>
+    <button class="nav-close" onclick="closeDrawer()">Cerrar</button>
+  </div>
   <div id="page-inicio" class="page active">
     <div class="month-nav"><button onclick="changeMonth(-1)">&#8249;</button><span class="month-label" id="lbl-inicio"></span><button onclick="changeMonth(1)">&#8250;</button></div>
     <div class="metrics">
@@ -343,7 +360,10 @@ async function loadAll(){
 function fmt(n){return'$'+Math.round(Number(n)).toLocaleString('es-MX');}
 function changeMonth(d){viewMonth+=d;if(viewMonth>11){viewMonth=0;viewYear++;}if(viewMonth<0){viewMonth=11;viewYear--;}renderAll();}
 function monthTxs(){return txs.filter(t=>{const d=new Date(t.date+'T12:00:00');return d.getFullYear()===viewYear&&d.getMonth()===viewMonth;});}
-function showPage(id,btn){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));document.getElementById('page-'+id).classList.add('active');btn.classList.add('active');renderAll();}
+function openDrawer(){document.getElementById('nav-drawer').classList.add('open');document.getElementById('nav-overlay').classList.add('open');}
+function closeDrawer(){document.getElementById('nav-drawer').classList.remove('open');document.getElementById('nav-overlay').classList.remove('open');}
+const PAGE_LABELS={inicio:'Inicio',movimientos:'Movimientos',presupuesto:'Presupuesto',metas:'Metas',deudas:'Deudas',recurrentes:'Recurrentes',tarjetas:'Tarjetas',calendario:'Calendario'};
+function showPage(id,btn){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.nav-drawer button').forEach(b=>b.classList.remove('active'));document.getElementById('page-'+id).classList.add('active');btn.classList.add('active');document.getElementById('nav-active-label').textContent=PAGE_LABELS[id]||id;closeDrawer();renderAll();}
 function setFilter(f,btn){txFilter=f;document.querySelectorAll('#page-movimientos .seg button').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderMovimientos();}
 function setTxType(t,btn){curTxType=t;document.querySelectorAll('#tx-type-seg button').forEach(b=>b.classList.remove('active'));btn.classList.add('active');}
 function setRecType(t,btn){curRecType=t;document.querySelectorAll('#rec-type-seg button').forEach(b=>b.classList.remove('active'));btn.classList.add('active');}
